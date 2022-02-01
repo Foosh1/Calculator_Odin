@@ -17,7 +17,7 @@ body{
     display:flex;
     flex-direction: column;
     height: 600px;
-    width: 400px;
+    width: 425px;
     border-style: solid;
     border-color: transparent;
     border-width: 3px;
@@ -34,10 +34,10 @@ body{
     border-style: solid;
     border-width: 3px;
     border-radius: 10px;
-    border-color: transparent;
-    padding: 15px;
-    margin: 5px 9px 0px;
-    height: 60px;
+    border-color: rgba(0, 0, 0, 0.89);
+    padding: 5px;
+    margin-top: 5px;
+    height: 125px;
     font-size: x-large;
     font-weight: bolder;
     background-color:rgb(124, 252, 124);
@@ -72,11 +72,7 @@ button{
     
 }
 
-#clear,
-#minus,
-#plus,
-#multiply,
-#divide{
+.operator{
     background-color: orange;
     color: black;
 }
