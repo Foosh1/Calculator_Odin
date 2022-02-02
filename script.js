@@ -1,123 +1,34 @@
-let results;
-let currentValue=null;
+let displayValue="";
 let num1=0;
 let num2=null;
 let operator=null;
+let results=null;
+let lastCalcValue=null;
 let previousOp=null;
-let previousNum2;
-let displayValue="";
+let previousNum2=null;
+let currentNum=null;
 let decimalNum1=false;
 let decimalNum2=false;
-let currentNum=null;
 
 const numberButtons= document.querySelectorAll(".number");
 const display= document.querySelector(".display");
-const equalsOp= document.querySelector("#equals");
-const addOp= document.querySelector("#plus");
-const subtractOp= document.querySelector("#minus");
-const multiplyOp= document.querySelector("#multiply");
-const divideOp= document.querySelector("#divide");
-const clearOp= document.querySelector("#clear");
-const backSpaceOp= document.querySelector("#delete");
+const equalsOp= document.getElementById("equals");
+const addOp= document.getElementById("plus");
+const subtractOp= document.getElementById("minus");
+const multiplyOp= document.getElementById("multiply");
+const divideOp= document.getElementById("divide");
+const clearOp= document.getElementById("clear");
+const backSpaceOp= document.getElementById("delete");
 
 backSpaceOp.addEventListener("click",backSpace);
 clearOp.addEventListener("click", clear);
 equalsOp.addEventListener("click", operate);
-addOp.addEventListener("click",function (e){
-    checkVals("Entering Operator Event Listener");
-    
-    if(operator===null){
-        
-        selectedOp(this.id);
-    }
-    else{
-        operate();
-        selectedOp(this.id);
-    } 
-    checkVals("Exiting Operator Event Listener");
-});
-subtractOp.addEventListener("click",function(e){
-    checkVals("Entering Operator Event Listener");
-   
-    if(operator===null){
-        selectedOp(this.id);
-    }
-    else{
-        operate();
-        selectedOp(this.id);
-    }
-    checkVals("Exiting Operator Event Listener");
-});
-multiplyOp.addEventListener("click",function(e){
-    checkVals("Entering Operator Event Listener");
-    
-    if(operator===null){
-        selectedOp(this.id);
-    }
-    else{
-        operate();
-        selectedOp(this.id);
-    }
-    checkVals("Exiting Operator Event Listener");
-});
-divideOp.addEventListener("click",function(e){
-    checkVals("Entering Operator Event Listener");
-    
-    if(operator===null){
-        selectedOp(this.id);
-    }   
-    else{
-        operate();
-        selectedOp(this.id);
-    }
-    checkVals("Exiting Operator Event Listener");
-});
+addOp.addEventListener("click",function (e){opButtonEvent(this.id)});
+subtractOp.addEventListener("click",function(e){opButtonEvent(this.id)});
+multiplyOp.addEventListener("click",function(e){opButtonEvent(this.id)});
+divideOp.addEventListener("click",function(e){opButtonEvent(this.id)});
 numberButtons.forEach(button => {
-    button.addEventListener("click",function(e){
-        
-        if(operator===null){
-            
-            if((this.id===".")&&(decimalNum1===true)) return;
-            if(this.id===".") decimalValue(1);
-            if(checkLength(num1)>=19) return;
-
-            if((num1===0)&&(this.id===".")){
-                num1=(num1+this.id);
-                displayNum(num1);
-            }
-            else if(num1===0){ 
-                num1=this.id;
-                displayNum(num1);
-            }
-            else{
-                num1=(num1+this.id);
-                displayNum(num1);
-            }   
-            currentNum=1;
-        }
-
-        else{
-
-            if((this.id===".")&&(decimalNum2===true)) return;
-            if(this.id===".") decimalValue(2);
-            if(checkLength(num2)>=19) return;
-
-            if((num2===null)&&(this.id===".")){
-                num2=("0"+this.id);
-                displayNum(num2);
-            }
-            else if(!num2){ 
-                num2=this.id;
-                displayNum(num2);
-            }
-            else{
-                num2=(num2+this.id);
-                displayNum(num2);
-            }
-            currentNum=2;
-        }
-        checkVals("At Number Event Listener Exit");
-    });
+    button.addEventListener("click",function(e){numButtonEvent(this.id)});   
 });
 
 displayNum(num1);
@@ -126,11 +37,8 @@ function checkVals(located){
     console.log("Location: ",located);
     console.log("First Number= ",num1);
     console.log("Second Number= ",num2);
-    console.log("Current Solution Value= ", currentValue)
+    console.log("Current Solution Value= ", lastCalcValue)
     console.log("Current Operator= ",operator);
-
-    //console.log("Length of num1=",checkLength(num1));
-    //console.log("Length of num2=",checkLength(num2));
     console.log("----------------------");
 }
 function backSpace(){
@@ -157,27 +65,6 @@ function decimalValue(number){
     else if(number===2)decimalNum2=true;
 }
 
-function needsTrim(num){
-    numCheck=num;
-
-    if(isNum(numCheck)===true)numCheck=numToString(numCheck);
-
-    if(checkLength(numCheck)>19){
-        numCheck= trimIt(numCheck);
-        return numCheck;
-    }
-    else return num;
-}
-
-function trimIt(num){
-    let numToTrim=num;
-    
-    if(isNum(numToTrim)===true) numToTrim=numToString(numToTrim);
-
-    numToTrim= trimNum(numToTrim);
-    return stringToNum(numToTrim);
-
-}
 function isString(num){
     if(typeof num==="string") return true;
     else return false;
@@ -197,11 +84,6 @@ function numToString(numberNum){
     return stringNum;
 }
 
-function trimNum(num){
-    let trimmedNum= num.slice(0,19);
-    return trimmedNum;
-}
-
 function checkLength(num){
     if(num===null)return;
     else if(num===undefined)return;
@@ -210,8 +92,70 @@ function checkLength(num){
     return numLength;
 }
 
-function setCurrentValue(num){
-    currentValue=num;
+function setLastCalcValue(num){
+    lastCalcValue=num;
+}
+
+function numButtonEvent(numPressed){
+
+    if(operator===null){
+            
+        if((numPressed===".")&&(decimalNum1===true)) return;
+        if(numPressed===".") decimalValue(1);
+        if(checkLength(num1)>=19) return;
+
+        if((num1===0)&&(numPressed===".")){
+            num1=(num1+numPressed);
+            displayNum(num1);
+        }
+        else if(num1===0){ 
+            num1=numPressed;
+            displayNum(num1);
+        }
+        else{
+            num1=(num1+numPressed);
+            displayNum(num1);
+        }   
+        currentNum=1;
+    }
+
+    else{
+
+        if((numPressed===".")&&(decimalNum2===true)) return;
+        if(numPressed===".") decimalValue(2);
+        if(checkLength(num2)>=19) return;
+
+        if((num2===null)&&(numPressed===".")){
+            num2=("0"+numPressed);
+            displayNum(num2);
+        }
+        else if(!num2){ 
+            num2=numPressed;
+            displayNum(num2);
+        }
+        else{
+            num2=(num2+numPressed);
+            displayNum(num2);
+        }
+        currentNum=2;
+    }
+    checkVals("At Number Event Listener Exit")
+}
+
+function opButtonEvent(opPressed){
+        checkVals("Entering Operator Event Listener");
+    
+
+    if(operator===null){
+        
+        selectedOp(opPressed);
+    }
+    else{
+        if(num2===null)return;//return if there isnt a second number
+        operate();
+        selectedOp(opPressed); //set the next calculation to use this operator now
+    }
+        checkVals("Entering Operator Event Listener");
 }
 
 function selectedOp(selected){
@@ -225,19 +169,21 @@ function resetNumOp(){
     decimalNum1=false;
     decimalNum2=false;
     currentNum=null;
+    results=null;
 }
 
 function clear(){
     resetNumOp();
     displayNum(num1);
-    currentValue=null;
-}
+    lastCalcValue=null;
+    previousOp=null;
+    previousNum2=null;
+    }
 
 function displayNum(num){
     displayValue=num;
     stringToNum(displayValue);
     display.textContent=displayValue;
-    
 }
 
 function add(num1,num2){
@@ -261,17 +207,15 @@ function divide(num1,num2){
     return quotient;
 }
 
-function operate(){
-
-    checkVals("Before Calc/Unchanged");
+function preCalcChecks(checkFirst,checkSecond){
     
+    
+    if(lastCalcValue!==null){ //If there was a previous calculation, set num1 = the result of the previous calculation
+        num1=lastCalcValue;
 
-    if(currentValue!==null){
-        num1=currentValue;
-
-        if(num2===null)num2=num1;
+        if(checkSecond===null)num2=num1;
     }
-    else if(num2===null) num2=num1;
+    else if(checkSecond===null) num2=num1;
 
     if(operator===null){
         if((previousOp===null)&&(num2===null)){
@@ -282,12 +226,35 @@ function operate(){
         num2= previousNum2;
         }
     }
-    checkVals("Before Calc/before String ");
-    num1=stringToNum(num1);
-    num2=stringToNum(num2);
+    num1=Number(num1);
+    num2=Number(num2);
+}
+function processResults(calcResults){
     
-    checkVals("Before Calc/Changed");
+    if(calcResults==="One does not Simply divide by 0"){
+        displayNum(calcResults);
+        calcResults=null;// if calcResults stays a string, the next operation preformed=NaN
+        setLastCalcValue(calcResults);
+        resetNumOp();
+        
+    }
+    else{
+        calcResults= Math.round(results*10000)/10000;
+        previousNum2=num2;
+        previousOp=operator;
+        setLastCalcValue(calcResults);
+        displayNum(calcResults);
+        resetNumOp();
+    }
+    checkVals("After Calculation and Reset");
 
+   
+}
+
+function operate(){
+        checkVals("Before Calc-Before Checks");
+    preCalcChecks(num1,num2);
+        checkVals("Before Calc-After Checks");
     switch(operator){
 
         case "plus":
@@ -299,7 +266,7 @@ function operate(){
         break;
 
         case "multiply":
-         results =multiply(num1,num2);
+        results =multiply(num1,num2);
         break;
 
         case "divide":
@@ -307,33 +274,13 @@ function operate(){
         break;
 
         case null:
-            results= displayValue;
+        results= displayValue;
         break;
     }
-        checkVals("After Calculation");
 
-        
+        checkVals("After Calc-Before");
 
-    if(results==="One does not Simply divide by 0"){
-        displayNum(results);
-        results=null;
-        setCurrentValue(results);
-        resetNumOp();
-        checkVals("After Calculation and Reset");
-    } 
-    else{
-        results= Math.round(results*10000)/10000;
-        previousNum2=num2;
-        previousOp=operator;
-        console.log("Length of Results=",checkLength(results));
-        //results=needsTrim(results);
-        //console.log("Length of Results after Trim=",checkLength(results));
-        setCurrentValue(results);
-        checkVals("After Calculation");
-        resetNumOp();
-        displayNum(results);
-        checkVals("After Calculation and Reset");
-    }
+    processResults(results);
 }
     
 
