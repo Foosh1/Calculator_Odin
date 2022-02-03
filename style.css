@@ -26,7 +26,7 @@ body{
     background-color: rgb(102, 101, 101);
 }
 
-.display{
+#display{
     display: flex;
     justify-content: flex-end;
     align-items: center;
@@ -44,23 +44,12 @@ body{
     
 }
 
-#inputs{
-    display:flex;
-    flex-wrap: wrap-reverse;
-    flex: 1 1 auto;
-    height: 500px;
-    border-style: solid;
-    border-radius: 5px;
-    border-color: transparent;
-    border-width: 3px;
-    padding: 4px;
-    background-color: rgb(102, 101, 101);
-}
+
 
 button{
-    flex:1 1 auto;
+    
     height: 90px;
-    width: 75px;
+    width: 92px;
     font-size: 25px;
     border-style: solid;
     border-color:transparent;
@@ -70,6 +59,34 @@ button{
     background-color: rgba(0, 0, 0, 0.767);
     color: floralwhite;
     
+}
+#inputs{
+    display:flex;
+    flex-direction: column;
+    height: 500px;
+    border-style: solid;
+    border-radius: 5px;
+    border-color: transparent;
+    border-width: 3px;
+    padding: 4px;
+    background-color: rgb(102, 101, 101);
+}
+
+.options{
+    display: flex;
+}
+.numAndOp{
+    display:flex;
+}
+.numberbuttons{
+    display:flex;
+    align-items: flex-start;
+    flex-wrap: wrap-reverse;
+    
+}
+.operatorbuttons{
+    display: flex;
+    flex-direction: column-reverse;
 }
 
 .operator{

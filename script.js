@@ -14,7 +14,7 @@ let decimalNum2=false;//This variable keeps track of if there is a decimal in th
 
 //the code below selects elements from our html file and assigns them a variable name so that we can add functionality to these elements with javascript
 const numberButtons= document.querySelectorAll(".number");//this selects ALL OF the number buttons since it uses ("querySelectorAll")
-const display= document.querySelector(".display");// this selects the display 
+const display= document.getElementById("display");// this selects the display 
 const equalsOp= document.getElementById("equals");// this selects the equals button
 const addOp= document.getElementById("plus");// this selects the plus button 
 const subtractOp= document.getElementById("minus");// this selects minus button
@@ -22,6 +22,7 @@ const multiplyOp= document.getElementById("multiply");// this selects the multip
 const divideOp= document.getElementById("divide");// this selects the divide button 
 const clearOp= document.getElementById("clear");// this selects the clear button 
 const backSpaceOp= document.getElementById("delete");// this selects the delete button 
+const plusMinus=document.getElementById("negative")//selects plus/minus button
 
 //the code below adds "event listeners" to all of our buttons so that when an event occurs(when the buttons are clicked), certain code is excuted. Example on next line
 backSpaceOp.addEventListener("click",backSpace); // when back space button is clicked, the code inside the function "backSpace" is excuted
@@ -29,6 +30,7 @@ clearOp.addEventListener("click", clear);
 equalsOp.addEventListener("click", operate);
 /* the 4 operators("+ - x ÷") call the same function("opButtonEvent") which assigns a value to the variable operator.
  we let that function know which operator is being pressed by giving it the id of the button pressed with ("this.id")*/
+plusMinus.addEventListener("click", negative);
 addOp.addEventListener("click",function (e){opButtonEvent(this.id)});
 subtractOp.addEventListener("click",function(e){opButtonEvent(this.id)});
 multiplyOp.addEventListener("click",function(e){opButtonEvent(this.id)});
@@ -39,6 +41,19 @@ numberButtons.forEach(button => {//(".forEach") means that the code below will e
 });
 
 displayNum(num1);// this displays the value of num1(which by default is 0) when the webpage is first loaded
+
+function negative(){//this function takes the current number, and multiples it by -1 giving us a negative number of the same number.
+    
+    if(currentNum===null)return;//exit condtion if no number exists yet
+    else if(currentNum===1){
+        num1=(num1*-1) ;
+        displayNum(num1)
+    }
+    else if(currentNum===2){
+        num2=(num2*-1);
+        displayNum(num2)
+    }
+}
 
 function checkVals(located){// this function checks these values when it is called. This helps with figuring out which part of the code is responsible if we get a value that we dont want
     console.log("Location= ",located);
@@ -58,15 +73,15 @@ function backSpace(){//this function deletes the last number entered when the de
     let newNum=displayValue.substring(0,(numLength-1));//this will be the new number being displayed after deleting the last number
 
     if(whichNum()===1){//this checks to see which number we are currently working with. This code excutes if we are working with number 1
-        if(checkLength(newNum)===0)num1=0;// if all numbers are deleted, then nothing would display, we want 0 to display in this case so we set number 1 equal to 0 if the length of the new number is 0
+        if(checkLength(newNum)===0||newNum==="-")num1=0;// if all numbers are deleted, then nothing would display, we want 0 to display in this case so we set number 1 equal to 0 if the length of the new number is 0
         else num1=newNum;// sets number 1 equal to the new number if the length of the new number is not 0
 
         displayNum(num1);// displays the new number
     }
     else if(whichNum()===2){//this checks to see which number we are currently working with. This code excutes if we are working with number 2
-        if(checkLength(newNum)===0)num2=0;// // if all numbers are deleted, then nothing would display, we want 0 to display in this case so we set number 2 equal to 0 if the length of the new number is 0
+        if(checkLength(newNum)===0||newNum==="-")num2=0;// // if all numbers are deleted, then nothing would display, we want 0 to display in this case so we set number 2 equal to 0 if the length of the new number is 0
         else num2=newNum;//set number 2 equal to the new number if the length of the new number is not 0
-            
+        
         displayNum(num2);//display the new number
     }
     
