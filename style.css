@@ -18,7 +18,7 @@ body{
     display:flex;
     flex:1 1 auto;
     flex-direction: column;
-    max-height: 650px;
+    max-height: 700px;
     max-width: 425px;
     border-style: solid;
     border-color: transparent;
@@ -76,11 +76,11 @@ button{
 }
 #inputs{
     display:flex;
-    justify-content: center;
-    align-items: center;
+    
     flex: 1 1 auto;
     flex-direction: column;
     height: 500px;
+    width: 384px;
     border-style: solid;
     border-radius: 5px;
     border-color: transparent;
@@ -98,6 +98,7 @@ button{
 .numAndOp{
     display:flex;
     flex: 1 1 auto;
+    width: 384px;
 }
 .numberbuttons{
     display:flex;
