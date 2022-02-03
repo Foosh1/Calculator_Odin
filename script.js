@@ -9,17 +9,19 @@ let results=null;//this variable tracks the value of the results of the calculat
 let currentSolution=null;// This variable keeps track of the results from the previous calculation
 let previousOp=null;//This variable keeps track of the operator used in the previous calculation
 let previousNum2=null;//This variable keeps track of the second number used in previous calculation
+let previousNum1=null;//This variable keeps track of the first number used in previous calculation
 let decimalNum1=false;//This variable keeps track of if there is a decimal in the first number, when a decimal is added the value is changed to true
 let decimalNum2=false;//This variable keeps track of if there is a decimal in the second number, when a decimal is added the value is changed to true
 
 //the code below selects elements from our html file and assigns them a variable name so that we can add functionality to these elements with javascript
-const numberButtons= document.querySelectorAll(".number");//this selects ALL OF the number buttons since it uses ("querySelectorAll")
+const equationDisplay=document.getElementById("equationDisplay");//selects the equation display
 const display= document.getElementById("display");// this selects the display 
+const numberButtons= document.querySelectorAll(".number");//this selects ALL OF the number buttons since it uses ("querySelectorAll")
 const equalsOp= document.getElementById("equals");// this selects the equals button
-const addOp= document.getElementById("plus");// this selects the plus button 
-const subtractOp= document.getElementById("minus");// this selects minus button
-const multiplyOp= document.getElementById("multiply");// this selects the multiply button
-const divideOp= document.getElementById("divide");// this selects the divide button 
+const addOp= document.getElementById("+");// this selects the plus button 
+const subtractOp= document.getElementById("-");// this selects minus button
+const multiplyOp= document.getElementById("*");// this selects the multiply button
+const divideOp= document.getElementById("/");// this selects the divide button 
 const clearOp= document.getElementById("clear");// this selects the clear button 
 const backSpaceOp= document.getElementById("delete");// this selects the delete button 
 const plusMinus=document.getElementById("negative")//selects plus/minus button
@@ -53,6 +55,7 @@ function negative(){//this function takes the current number, and multiples it b
         num2=(num2*-1);
         displayNum(num2)
     }
+    displayEquation()
 }
 
 function checkVals(located){// this function checks these values when it is called. This helps with figuring out which part of the code is responsible if we get a value that we dont want
@@ -84,7 +87,7 @@ function backSpace(){//this function deletes the last number entered when the de
         
         displayNum(num2);//display the new number
     }
-    
+    displayEquation()
     checkVals("end of backspace");
 }
 function whichNum(){// this function check to see which number we are currently displaying in the calculator
@@ -112,7 +115,7 @@ function numButtonEvent(numPressed){// This is the code that excutes when a numb
             
         if((numPressed===".")&&(decimalNum1===true)) return; //exits function if decimal is pressed but there is already one in the number
         if(numPressed===".") decimalValue(1); // if decimal is pressed call a function which assigns a value of true to the variable decimalNum1, this variable is checked for in the previous line
-        if(checkLength(num1)>=19) return;// exits the function if the length of the current number is greater than 19
+        if(checkLength(num1)>=22) return;// exits the function if the length of the current number is greater than 19
 
         if((num1===0)&&(numPressed===".")){ //if the number on screen is currently 0 and a decimal is pressed
             num1=(num1+numPressed);//adds the decimal behind the zero
@@ -133,7 +136,7 @@ function numButtonEvent(numPressed){// This is the code that excutes when a numb
 
         if((numPressed===".")&&(decimalNum2===true)) return; //this code excutes if an operator has been pressed. The code below assigns the value for the second number in  almost an identical way to the first
         if(numPressed===".") decimalValue(2);
-        if(checkLength(num2)>=19) return;
+        if(checkLength(num2)>=22) return;
 
         if((num2===null)&&(numPressed===".")){//default value for the second number is =null which means "no value" so we check to see if it is still at default value and we check to see if a decimal was pressed
             num2=("0"+numPressed);// since the default valuee for the second number isnt 0 we have to set the second number = 0 + decimal
@@ -149,6 +152,7 @@ function numButtonEvent(numPressed){// This is the code that excutes when a numb
         }
         currentNum=2;//sets current number equal to second number
     }
+    displayEquation()
     checkVals("At Number Event Listener Exit")
 }
 
@@ -163,6 +167,7 @@ function opButtonEvent(opPressed){// this function decides what happens when an 
         selectedOp(opPressed); //set the next calculation to use this operator now
     }
         checkVals("Entering Operator Event Listener");
+        displayEquation()
 }
 
 function selectedOp(selected){// this function sets the value of operator equal to the operator button clicked
@@ -185,7 +190,36 @@ function clear(){// this function is called when the "Clear" button is clicked i
     currentSolution=null;
     previousOp=null;
     previousNum2=null;
+    equationDisplay.textContent="";
+}
+
+function displayEquation(){
+    let first;
+    let second;
+    let sign;
+    let equalSign;
+    let equation;
+
+    if(num1===0&&operator!==null){
+        if(currentSolution===null)first="0";
+        else first=currentSolution;
     }
+    else if(num1===0) first="";
+    else first=num1;
+
+    if(num2===null)second="";
+    else second=num2;
+
+    if(operator===null)sign="";
+    else sign=operator;
+
+    if(results===null)equalSign="";
+    else equalSign="=";
+
+    equation = first+sign+second+equalSign;
+    if(checkLength(equation)>22) equation="=";
+    equationDisplay.textContent=equation;
+}
 
 function displayNum(num){// this function sets the value of displayValue equal to the number given to it, then displays it
     displayValue=num;
@@ -240,11 +274,14 @@ function processResults(calcResults){//this function processes the results from 
     }
     else{
         calcResults= Math.round(results*10000)/10000;//round the calculation to 4 decimal points
+        previousNum1=num1;//set the value of previous number 1 equal to number 1
         previousNum2=num2;//set the value of previous number 2 equal to number 2
         previousOp=operator;//set the value of previous operator equal to the operator that was used the calulation
         currentSolution=calcResults;//set the value of current currentSolution equal to the results of the calculation preformed
         displayNum(calcResults);//display the results of the calculation
+        displayEquation(previousNum1,previousNum2,previousOp)
         resetNumOp();//reset some variables so another operation can be done
+
     }
     checkVals("After Calculation and Reset");
 }
@@ -255,24 +292,25 @@ function operate(){// this function preforms the calculation
         checkVals("Before Calc-After Checks");
     switch(operator){
 
-        case "plus"://if the current operator is + then add number 1 and 2
+        case "+"://if the current operator is + then add number 1 and 2
         results =add(num1,num2);
         break;
 
-        case "minus"://if the current operator is - then subtract number 2 from from number 1
+        case "-"://if the current operator is - then subtract number 2 from from number 1
         results =subtract(num1,num2);
         break;
 
-        case "multiply"://if the current operator is x then multiply number 1 and number 2
+        case "*"://if the current operator is x then multiply number 1 and number 2
         results =multiply(num1,num2);
         break;
 
-        case "divide"://if the current operator is ÷ then divide number 1 by number 2
+        case "/"://if the current operator is ÷ then divide number 1 by number 2
         results =divide(num1,num2);
         break;
 
         case null://if the current operator is null then someone clicked "="after inputting a number so all we do is keep displaying that number
         results= displayValue;
+        num2=null;
         break;
     }
         checkVals("After Calc-Before");
